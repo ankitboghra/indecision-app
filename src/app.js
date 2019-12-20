@@ -2,11 +2,12 @@ class IndecisionApp extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            options: []
+            options: props.options
         }
         this.handleRemoveAll = this.handleRemoveAll.bind(this);
         this.pickOne = this.pickOne.bind(this);
         this.handleAddOption = this.handleAddOption.bind(this);
+        this.handleRemoveOption = this.handleRemoveOption.bind(this);
     }
 
     pickOne() {
@@ -16,6 +17,11 @@ class IndecisionApp extends React.Component {
     handleRemoveAll() {
         console.log(this);
         this.setState(()=>({options: []}));
+    }
+    handleRemoveOption(optionToRemove) {
+        this.setState((prevState) => ({
+            options: prevState.options.filter((option) => !(optionToRemove === option))
+        }))
     }
     handleAddOption(option) {
         if(!option) {
@@ -37,8 +43,7 @@ class IndecisionApp extends React.Component {
 
         return (
             <div>
-                <Header 
-                    title={title}
+                <Header
                     subTitle={subTitle}
                 />
                 <Action
@@ -48,6 +53,7 @@ class IndecisionApp extends React.Component {
                 <Options
                     options={this.state.options}
                     handleRemoveAll={this.handleRemoveAll}
+                    handleRemoveOption={this.handleRemoveOption}
                 />
                 <AddOption
                     handleAddOption={this.handleAddOption}
@@ -56,47 +62,57 @@ class IndecisionApp extends React.Component {
         );
     }
 }
-
-class Header extends React.Component {
-    render() {
-        return (
-            <div>
-                <h1>{this.props.title}</h1>
-                <h2>{this.props.subTitle}</h2>
-            </div>
-        );
-    }
+IndecisionApp.defaultProps = {
+    options: []
 }
 
-class Action extends React.Component {
-    render() {
-        return (
-            <div>
-                <button disabled={!this.props.hasOptions} onClick={this.props.pickOne}>What should I do?</button>
-            </div>
-        );
-    }
+const Header = (props) => {
+    return (
+        <div>
+            <h1>{props.title}</h1>
+            <h2>{props.subTitle}</h2>
+        </div>
+    );
+}
+Header.defaultProps = {
+    title: 'Indecision!!'
 }
 
-class Options extends React.Component {    
-    render() {
-        return (
-            <div>
-                <button onClick={this.props.handleRemoveAll} >Remove All</button>
-                {this.props.options.map((option)=> <Option key={option} optionText={option}/>)}
-            </div>
-        );
-    }
+const Action = (props) => {
+    return (
+        <div>
+            <button disabled={!props.hasOptions} onClick={props.pickOne}>What should I do?</button>
+        </div>
+    );
 }
 
-class Option extends React.Component {
-    render() {
-        return (
-             <div>
-                {this.props.optionText}
-            </div>
-        );
-    }
+const Options = (props) => {
+    return (
+        <div>
+            <button onClick={props.handleRemoveAll} >Remove All</button>
+            {props.options.map((option)=> (
+                <Option
+                    key={option}
+                    optionText={option}
+                    handleRemoveOption={props.handleRemoveOption}
+                />))}
+        </div>
+    );
+}
+
+const Option = (props) => {
+    return (
+        <div>
+           {props.optionText}
+           <button
+                onClick={(e)=> {
+                    props.handleRemoveOption(props.optionText)
+                }}
+            >
+            Remove
+            </button>
+       </div>
+   );
 }
 
 class AddOption extends React.Component {
@@ -113,6 +129,7 @@ class AddOption extends React.Component {
         const option = e.target.elements.option.value;
         const error = this.props.handleAddOption(option);
         this.setState(() => ({error}))
+        e.target.elements.option.value = '';
     }
     render() {
         return (
