@@ -144,6 +144,11 @@ var Options = function Options(props) {
             { onClick: props.handleRemoveAll },
             'Remove All'
         ),
+        props.options.length === 0 && React.createElement(
+            'p',
+            null,
+            'Please enter an item to get started.'
+        ),
         props.options.map(function (option) {
             return React.createElement(Option, {
                 key: option,
@@ -196,7 +201,9 @@ var AddOption = function (_React$Component2) {
             this.setState(function () {
                 return { error: error };
             });
-            e.target.elements.option.value = '';
+            if (!error) {
+                e.target.elements.option.value = '';
+            }
         }
     }, {
         key: 'render',
