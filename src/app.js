@@ -10,12 +10,31 @@ class IndecisionApp extends React.Component {
         this.handleRemoveOption = this.handleRemoveOption.bind(this);
     }
 
+    componentDidMount() {
+        try {
+            const json = localStorage.getItem('options');
+            const options = JSON.parse(json);
+
+            if(options) {
+                this.setState(() => ({ options })); 
+            }
+        } catch(e) {
+            // Do Nothing
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.options.length !== this.state.options.length) {
+            const json = JSON.stringify(this.state.options);
+            localStorage.setItem('options', json);
+        }
+    }
+
     pickOne() {
         const optionIndex = Math.floor(Math.random() * this.state.options.length);
         alert(this.state.options[optionIndex]);
     }
     handleRemoveAll() {
-        console.log(this);
         this.setState(()=>({options: []}));
     }
     handleRemoveOption(optionToRemove) {

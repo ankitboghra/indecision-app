@@ -29,6 +29,30 @@ var IndecisionApp = function (_React$Component) {
     }
 
     _createClass(IndecisionApp, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            try {
+                var json = localStorage.getItem('options');
+                var options = JSON.parse(json);
+
+                if (options) {
+                    this.setState(function () {
+                        return { options: options };
+                    });
+                }
+            } catch (e) {
+                // Do Nothing
+            }
+        }
+    }, {
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate(prevProps, prevState) {
+            if (prevState.options.length !== this.state.options.length) {
+                var json = JSON.stringify(this.state.options);
+                localStorage.setItem('options', json);
+            }
+        }
+    }, {
         key: 'pickOne',
         value: function pickOne() {
             var optionIndex = Math.floor(Math.random() * this.state.options.length);
@@ -37,7 +61,6 @@ var IndecisionApp = function (_React$Component) {
     }, {
         key: 'handleRemoveAll',
         value: function handleRemoveAll() {
-            console.log(this);
             this.setState(function () {
                 return { options: [] };
             });
