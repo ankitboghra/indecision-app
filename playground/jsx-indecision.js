@@ -1,6 +1,3 @@
-// To run babel
-// babel src/app.js --out-file=public/scripts/app.js --presets=env,react --watch
-
 const app = {
     title: "Indecision App",
     subtitle: "Let the show begin!",
